@@ -13,7 +13,7 @@ var io = socket(server);
 
 // we call a allback function when a connection is established
 // we have to listen for the message sent from the client (the 'chat' message)
-io.on('connection', (socket) => {
+io.on('connection', socket => {
     console.log('Made socket connection ', socket.id);
     // we are referring to the socket between the server and the particular client
     // that is sending the message
@@ -24,7 +24,13 @@ io.on('connection', (socket) => {
     // .emit a message to everyone of those
     // we have to say what kind of message we're sending back to the clients
     // we are sending the 'data' we received from the first client
-    socket.on('chat', (data) => {
+    socket.on('chat', data => {
         io.sockets.emit('chat', data)
     });
+
+    socket.on('typing', data => {
+        socket.broadcast.emit('typing', data)
+    })
 })
+
+// Broadcast is sending from the server to all the clients except the one that originated the message

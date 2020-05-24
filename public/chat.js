@@ -9,6 +9,7 @@ var message = document.getElementById('message');
 var handle = document.getElementById('handle');
 var btn = document.getElementById('send');
 var output = document.getElementById('output');
+var feedback = document.getElementById('feedback');
 
 // Emit an event(message) and send it on the websocket
 // this will emit a message down the socket to the server,
@@ -23,9 +24,20 @@ btn.addEventListener('click', () => {
     });
 });
 
-// Listen for events 
+message.addEventListener('keypress', () => {
+    socket.emit('typing', handle.value);
+});
+
+// Listen for events
+
 // we are listening for the chat message from the server
 // with the data we can outputting them to the dom
 socket.on('chat', data => {
+    feedback.innerHTML = '';
     output.innerHTML += '<p><strong>' + data.handle + ':</strong>' + data.message + '</p>';
-})
+});
+
+// we are listening for the broadcast
+socket.on('typing', data => {
+    feedback.innerHTML = '<p><em>' + data + ' is typing a message ...' + '</em></p>';
+});
